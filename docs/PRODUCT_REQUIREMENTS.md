@@ -1,7 +1,7 @@
 # RISE NETWORK — Product Requirements
 
 > **Status:** Draft v0.1 (Phase 0). Owner: Product owner (Ntokozo Maselala). Last updated: 2026-11-25.
-> Items marked **[OPEN]** depend on a product-owner decision listed in §9.
+> Product-owner decisions are recorded in §9.
 
 ## 1. Product vision
 
@@ -32,7 +32,7 @@ Measurable, privacy-conscious impact.
 | ---------------------------- | ------------------------------------------------------ | ----------------------------- |
 | Visitor                      | Unregistered person browsing public content            | None                          |
 | Member                       | Registered young person / community member             | Required                      |
-| Contributor                  | Authorised person who submits content for review       | Required + `contributor` role |
+| Contributor                  | Any signed-in member who submits content for review (D-03) | Required (no separate role in MVP) |
 | Moderator                    | Reviews submissions and reports; cannot manage roles   | Required + `moderator` role   |
 | Administrator                | Full operational control incl. roles and configuration | Required + `admin` role       |
 | Mentor _(P1+)_               | Approved mentor (approval workflow required first)     | Required + approval           |
@@ -75,7 +75,7 @@ R = review/inspection).
 - **Rationale:** Needed for saving opportunities, submissions and profiles.
 - **Actor:** Visitor. **Preconditions:** Not signed in.
 - **Main flow:** Open Register → enter email, password, display name, confirm age eligibility
-  **[OPEN D-01]**, accept Terms and acknowledge Privacy Notice → submit → confirmation email
+  (18+, per D-01), accept Terms and acknowledge Privacy Notice → submit → confirmation email
   sent → user confirms → profile row created with role `member`.
 - **Alternative:** Email already registered → generic response ("check your email") to avoid
   account enumeration.
@@ -147,7 +147,7 @@ R = review/inspection).
 
 ### FR-008 Submit opportunity
 
-- **Description:** Contributor (and, **[OPEN D-03]**, possibly any member) submits an
+- **Description:** Any signed-in member (D-03) submits an
   opportunity for review with mandatory source URL.
 - **Main flow:** Fill form → client and server validation → saved as `pending_review`
   → contributor sees status in "My submissions".
@@ -198,7 +198,7 @@ R = review/inspection).
 ### FR-014 Submit report
 
 - **Description:** Any user reports a listing as suspicious, incorrect, expired or other.
-  **[OPEN D-04]** whether anonymous reports are allowed.
+  Signed-in users only (D-04).
 - **Acceptance:** reports go to a moderation queue; reporters cannot read other reports;
   rate limited.
 - **Priority:** P0. **Verify:** I, E.
@@ -220,7 +220,7 @@ R = review/inspection).
 ### FR-017 Admin dashboard
 
 - **Description:** Aggregate counts: published, pending, expiring in 14 days, expired,
-  open reports, stale listings (not checked in N days **[OPEN D-06]**), member count.
+  open reports, stale listings (not checked in 30 days, D-06), member count.
 - **Acceptance:** aggregates only; no personal data beyond what the role needs.
 - **Priority:** P0. **Verify:** I, C.
 
@@ -234,7 +234,7 @@ R = review/inspection).
 
 - **Description:** Member requests deletion from settings; account and personal data are
   deleted or anonymised per retention rules; submitted public content is retained with
-  author detached **[OPEN D-05]**.
+  author detached (D-05).
 - **Acceptance:** after deletion the user cannot sign in; saved items and profile are removed;
   audit entries keep a non-identifying actor reference.
 - **Priority:** P0. **Verify:** I, E.
@@ -282,8 +282,9 @@ R = review/inspection).
 
 ### 8.1 Verified facts (2026-11-25)
 
-- GitHub repository `shaunmaselela25/Rise-network` exists, is **public**, and is empty.
-- Local clone on `main` with no commits; work proceeds on `feature/rise-network-foundation`.
+- GitHub repository `shaunmaselela25/Rise-network` exists and is **public**. It was empty at
+  inspection; `main` now holds a single empty initial commit (pushed 2026-11-25).
+- Work proceeds on `feature/rise-network-foundation`.
 - Tooling available locally: Node 26.13, npm 11.20, git 2.55, GitHub CLI (authenticated).
 - Docker is installed but the daemon was not running; the local Supabase stack is therefore
   not yet available.
@@ -304,18 +305,22 @@ R = review/inspection).
 
 See §9.
 
-## 9. Open decisions
+## 9. Product-owner decisions
 
-| ID   | Decision                                                                | Why it matters                                                                                                   | Recommendation                                                                         |
-| ---- | ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| D-01 | Minimum age / may minors register?                                      | POPIA treats under-18s as children requiring a competent person's consent; affects registration and safeguarding | Registration 18+ for MVP; browsing open to all ages; revisit with legal advice         |
-| D-02 | Publish unverified listings?                                            | Credibility vs. coverage                                                                                         | Publish only after human review (`source_checked` minimum); never publish `unverified` |
-| D-03 | Who can submit opportunities?                                           | Spam and moderation load                                                                                         | Any signed-in member may _submit for review_; only moderators publish                  |
-| D-04 | Anonymous reports?                                                      | Abuse vs. accessibility                                                                                          | Allow signed-in reports only for MVP, plus a public contact email                      |
-| D-05 | On account deletion, what happens to a contributor's published content? | Content continuity vs. erasure                                                                                   | Keep content, detach author (set to null)                                              |
-| D-06 | Freshness rule: re-check interval                                       | Admin workload                                                                                                   | Flag listings not checked in 30 days                                                   |
-| D-07 | Hosting provider and domain                                             | Cost, headers, region                                                                                            | Decide before Phase 7                                                                  |
-| D-08 | Supabase organisation/project ownership and region                      | Data residency (POPIA s72 cross-border transfer)                                                                 | PO-owned Supabase account; record region in PRIVACY.md                                 |
-| D-09 | Official contact email for the platform                                 | Contact page, security reporting, data-subject requests                                                          | Needed before public launch                                                            |
-| D-10 | Brand colours / logo                                                    | Visual identity                                                                                                  | Use restrained interim palette (ADR-0004) until a brand is designed                    |
-| D-11 | Information Officer (POPIA) designation                                 | Legal obligation for responsible parties                                                                         | PO to designate before launch                                                          |
+On **2026-11-25** the product owner instructed: "go with the recommendations". Decisions
+D-01 to D-06 and D-10 are therefore **approved as recommended**. D-07, D-08, D-09 and D-11
+need information or action only the product owner can provide and remain **open**.
+
+| ID   | Decision | Status | Outcome |
+| ---- | -------- | ------ | ------- |
+| D-01 | May minors register? | Approved 2026-11-25 | Browsing open to all ages. Account registration 18+ for MVP (self-declared age confirmation at sign-up). Revisit with legal advice before allowing minors. |
+| D-02 | Publish unverified listings? | Approved 2026-11-25 | Publish only after human review. `verification_status` must be `source_checked` or `provider_confirmed` at the moment of publishing; `unverified` is never published. |
+| D-03 | Who can submit opportunities? | Approved 2026-11-25 | Any signed-in member may submit for review; only moderators/admins publish. The `contributor` role is not needed for MVP and is not created. |
+| D-04 | Anonymous reports? | Approved 2026-11-25 | Signed-in reports only for MVP; public contact channel once D-09 is decided. |
+| D-05 | Contributor content on account deletion | Approved 2026-11-25 | Keep content; set `submitted_by` to null. |
+| D-06 | Freshness interval | Approved 2026-11-25 | Flag published listings not checked in 30 days. |
+| D-07 | Hosting provider and domain | Open | Needed before Phase 7. |
+| D-08 | Supabase account ownership and region | Open (recommendation accepted in principle) | Product owner creates and owns the Supabase account; region to be recorded in PRIVACY.md. Not needed for local development. |
+| D-09 | Official contact email | Open | Needed before public launch. |
+| D-10 | Brand colours / logo | Approved 2026-11-25 | Interim palette (ADR-0004) until a brand is designed. |
+| D-11 | POPIA Information Officer | Open | Product owner to designate before launch. |

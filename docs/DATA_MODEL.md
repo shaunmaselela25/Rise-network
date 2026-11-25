@@ -1,121 +1,139 @@
 # RISE NETWORK — Data Model
 
-> **Status:** **Proposed (Phase 0).** No migrations exist yet. This model is the input to
-> Phase 2 and will be updated to match the migrations once written. Last updated: 2026-11-25.
+> **Status:** Implemented as migrations in `supabase/migrations/` (Phase 2). This document
+> describes those migrations; if they disagree, the migrations are authoritative.
+> Last updated: 2026-11-25.
 
 ## 1. Conventions
 
-- PostgreSQL in Supabase; schema `public` for app tables; `auth.users` owned by Supabase.
-- `snake_case` names; plural table names; `uuid` primary keys (`gen_random_uuid()`), except
-  lookup tables keyed by a stable `text` code.
-- All timestamps `timestamptz`, stored in UTC, displayed in `Africa/Johannesburg`.
-- Every table has `created_at`; mutable tables also `updated_at` (trigger-maintained).
-- Enumerations as Postgres `enum` types where the set is closed and changes are rare;
-  lookup tables where admins must maintain the list (categories).
-- RLS enabled on **every** table. Default deny.
+- PostgreSQL 17 in Supabase; app tables in `public`; privileged helper functions in
+  `private` (not exposed by the API); `auth.users` owned by Supabase Auth.
+- `snake_case`, plural table names, `uuid` primary keys (`gen_random_uuid()`); lookup
+  tables keyed by a stable `text` code; `audit_logs` uses a bigint identity.
+- All timestamps `timestamptz` (UTC). "Today" for deadlines is computed in
+  `Africa/Johannesburg` (`private.today_sast()`).
+- `updated_at` maintained by trigger on mutable tables.
+- Closed sets are Postgres enums; admin-maintained lists are lookup tables.
+- **RLS enabled on every table**, privileges granted explicitly per column where needed,
+  function `EXECUTE` revoked from `PUBLIC` (verified by `supabase/tests/database/01_*`).
 
-## 2. Entity-relationship diagram (MVP)
+## 2. Entity-relationship diagram
 
 ```mermaid
 erDiagram
-  auth_users ||--|| profiles : "has"
+  auth_users ||--|| profiles : "1:1 (cascade)"
   profiles ||--o{ user_roles : "granted"
-  profiles ||--o{ saved_opportunities : "saves"
-  profiles ||--o{ opportunities : "submits (nullable)"
-  profiles ||--o{ opportunity_reviews : "reviews"
-  profiles ||--o{ reports : "files"
-  profiles ||--o{ consent_records : "gives"
-  organisations ||--o{ opportunities : "provides"
+  profiles ||--o{ consent_records : "gives (cascade)"
+  profiles ||--o{ saved_opportunities : "saves (cascade)"
+  profiles |o--o{ opportunities : "submits (set null)"
+  profiles |o--o{ reports : "files (set null)"
   opportunity_categories ||--o{ opportunities : "classifies"
-  opportunities ||--o{ opportunity_reviews : "has history"
-  opportunities ||--o{ saved_opportunities : "saved in"
-  opportunities ||--o{ reports : "reported in"
-  resource_categories ||--o{ learning_resources : "classifies"
-  resource_categories ||--o{ career_resources : "classifies"
-  profiles ||--o{ audit_logs : "acts (nullable)"
+  opportunities ||--o{ opportunity_reviews : "history (restrict)"
+  opportunities ||--o{ saved_opportunities : "saved in (cascade)"
+  opportunities ||--o{ reports : "reported in (restrict)"
+  learning_categories ||--o{ learning_resources : "classifies"
 ```
 
-## 3. Entities (MVP)
+`audit_logs.actor_id`, `opportunity_reviews.reviewer_id`, `reports.resolved_by` and
+`user_roles.granted_by` deliberately have **no foreign key**, so accountability records
+survive account deletion as non-identifying references.
 
-| Table                    | Purpose                                                      | Key columns / constraints                                                                                                                                                                                                           |
-| ------------------------ | ------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `profiles`               | Member profile, 1:1 with `auth.users`                        | `id` PK = FK `auth.users.id` ON DELETE CASCADE; `display_name` (1–80 chars); `province` nullable enum; `education_level` nullable enum; `interests text[]` (validated against category codes); timestamps                           |
-| `user_roles`             | Role assignments                                             | PK (`user_id`, `role`); `role` enum (`contributor`,`moderator`,`admin`); `granted_by` FK profiles; `granted_at`. Members have no row (implicit role)                                                                                |
-| `organisations`          | Opportunity providers (name only in MVP; no "partner" claim) | `name` unique (case-insensitive), `website_url` https check                                                                                                                                                                         |
-| `opportunity_categories` | Admin-maintained categories                                  | `code` text PK, `label`, `sort_order`, `is_active`                                                                                                                                                                                  |
-| `opportunities`          | Core listing                                                 | see §3.1                                                                                                                                                                                                                            |
-| `opportunity_reviews`    | Append-only moderation history                               | `opportunity_id` FK, `reviewer_id` FK, `decision` enum (`approved`,`rejected`,`changes_requested`,`published`,`unpublished`,`archived`), `from_status`, `to_status`, `note`, `created_at`. No UPDATE/DELETE                         |
-| `saved_opportunities`    | Member bookmarks + tracking                                  | PK (`user_id`,`opportunity_id`); `tracking_status` enum (`interested`,`applying`,`applied`,`not_proceeding`); ON DELETE CASCADE both sides                                                                                          |
-| `learning_resources`     | Learning directory                                           | `title`, `provider`, `category_code` FK, `level` enum, `format` enum, `cost` enum (`free`,`paid`,`funded`,`unknown`), `duration_text`, `requirements`, `url` https, `status` (`draft`,`published`,`archived`), `last_reviewed_at`   |
-| `career_resources`       | Career guidance articles/links                               | `title`, `slug` unique, `summary`, `body` (markdown, sanitised on render), `topic` enum, `external_url` nullable, `status`, `last_reviewed_at`                                                                                      |
-| `resource_categories`    | Categories for learning/career                               | `code` PK, `label`, `kind`                                                                                                                                                                                                          |
-| `reports`                | User reports on listings                                     | `opportunity_id` FK, `reporter_id` FK nullable (ON DELETE SET NULL), `reason` enum (`suspicious`,`incorrect`,`expired`,`other`), `details` ≤ 1000 chars, `status` (`open`,`dismissed`,`actioned`), `resolved_by`, `resolution_note` |
-| `consent_records`        | Terms/privacy acceptance history                             | `user_id`, `document` enum (`terms`,`privacy`), `version` text, `accepted_at`                                                                                                                                                       |
-| `audit_logs`             | Append-only admin audit trail                                | `id` bigint identity, `actor_id` nullable, `action` text, `entity_type`, `entity_id`, `old_data jsonb`, `new_data jsonb`, `created_at`. Insert only via triggers/functions                                                          |
+## 3. Tables
+
+| Table | Purpose | Key constraints |
+|---|---|---|
+| `profiles` | Member profile | PK = `auth.users.id` (cascade); `display_name` 1–80; optional `province`, `education_level`, `interests` (≤ 20); `age_confirmed_at` NOT NULL (D-01) |
+| `user_roles` | Elevated roles (`moderator`, `admin`). Members have no row | PK (`user_id`, `role`) |
+| `consent_records` | Terms/privacy acceptance history | `document` enum, `version` 1–32 chars |
+| `audit_logs` | Append-only audit trail | Update/delete/truncate blocked by trigger, even for the owner |
+| `opportunity_categories` | Field/sector categories (initial set seeded by migration, editable by staff) | `code` pattern `^[a-z][a-z0-9_]{1,40}$` |
+| `opportunities` | Core listing | See §3.1 |
+| `opportunity_reviews` | Append-only moderation history | FK restrict; no client write privileges |
+| `saved_opportunities` | Member bookmarks + tracking status | PK (`user_id`, `opportunity_id`) |
+| `reports` | User reports on listings | Resolution fields consistent with status (check) |
+| `learning_categories` | Learning categories (seeded, editable) | as above |
+| `learning_resources` | Learning directory | `url` https; `cost` free/paid/funded/unknown; `status` draft/published/archived |
+| `career_resources` | Career guidance | `slug` kebab-case unique; must have `body` or `external_url` |
 
 ### 3.1 `opportunities`
 
-| Column                                                 | Type               | Notes                                                                                                                                                                                                                 |
-| ------------------------------------------------------ | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `id`                                                   | uuid PK            |                                                                                                                                                                                                                       |
-| `slug`                                                 | text unique        | generated from title + short id                                                                                                                                                                                       |
-| `title`                                                | text not null      | 5–160 chars                                                                                                                                                                                                           |
-| `summary`                                              | text not null      | ≤ 300 chars                                                                                                                                                                                                           |
-| `description`                                          | text not null      | markdown, sanitised on render                                                                                                                                                                                         |
-| `opportunity_type`                                     | enum               | scholarship, bursary, internship, learnership, graduate_programme, entry_level_job, training, skills_programme, apprenticeship, education_programme, competition, entrepreneurship, grant, volunteering, event, other |
-| `category_code`                                        | text FK            | `opportunity_categories`                                                                                                                                                                                              |
-| `organisation_id`                                      | uuid FK            | provider                                                                                                                                                                                                              |
-| `source_url`                                           | text not null      | `^https://` check (BR-05)                                                                                                                                                                                             |
-| `application_url`                                      | text null          | `^https://` check; required to publish unless `application_instructions` set                                                                                                                                          |
-| `application_instructions`                             | text null          | for offline applications                                                                                                                                                                                              |
-| `location_text`, `province`, `municipality`            |                    | `province` enum incl. `national`, `online`                                                                                                                                                                            |
-| `delivery_mode`                                        | enum               | in_person, remote, hybrid                                                                                                                                                                                             |
-| `eligibility`, `required_documents`, `required_skills` | text               | provider-supplied only                                                                                                                                                                                                |
-| `min_qualification`                                    | enum null          | none, grade_9, matric, certificate, diploma, degree, postgraduate                                                                                                                                                     |
-| `age_min`, `age_max`                                   | smallint null      | only if provider states it; check 0–120 and min ≤ max                                                                                                                                                                 |
-| `opens_at`                                             | date null          |                                                                                                                                                                                                                       |
-| `closes_at`                                            | date null          | null = rolling/no deadline; check `closes_at >= opens_at`                                                                                                                                                             |
-| `duration_text`, `financial_details`, `contact_info`   | text null          |                                                                                                                                                                                                                       |
-| `status`                                               | enum               | draft, pending_review, changes_requested, rejected, published, archived                                                                                                                                               |
-| `verification_status`                                  | enum               | unverified, source_checked, provider_confirmed, needs_recheck, disputed                                                                                                                                               |
-| `verification_notes`                                   | text null          |                                                                                                                                                                                                                       |
-| `last_checked_at`                                      | timestamptz null   |                                                                                                                                                                                                                       |
-| `published_at`                                         | timestamptz null   |                                                                                                                                                                                                                       |
-| `submitted_by`                                         | uuid FK null       | ON DELETE SET NULL (D-05)                                                                                                                                                                                             |
-| `search_vector`                                        | tsvector generated | title, summary, description, organisation name via trigger                                                                                                                                                            |
-| `created_at`, `updated_at`                             | timestamptz        |                                                                                                                                                                                                                       |
+Content: `title` (5–160), `summary` (≤ 300), `description` (≤ 10 000), `opportunity_type`
+(16 values), `category_code`, `provider_name`, `provider_url`, `source_url` (**required**),
+`application_url`, `application_instructions`, `location_text`, `province`, `municipality`,
+`delivery_mode`, `eligibility`, `required_documents`, `required_skills`,
+`min_qualification`, `age_min`/`age_max`, `opens_at`, `closes_at`, `duration_text`,
+`financial_details`, `contact_info`.
 
-**Expiry:** "expired" is **derived** (`closes_at < current_date` in SAST), not a stored
-status, so it can never drift. Public listing view filters it out of "active" results;
-`archived` is an explicit admin action. A daily job flags expired items for archiving.
+Governance: `status` (draft, pending_review, changes_requested, rejected, published,
+archived), `verification_status` (unverified, source_checked, provider_confirmed,
+needs_recheck, disputed), `verification_notes`, `last_checked_at`, `published_at`,
+`submitted_by` (default `auth.uid()`, set null on account deletion).
 
-**Indexes (query-driven):** `(status, closes_at)` partial where `status='published'`;
-GIN on `search_vector`; `(province)`, `(opportunity_type)`, `(category_code)`;
-`saved_opportunities(user_id)`; `reports(status, created_at)`;
-`audit_logs(entity_type, entity_id)`, `audit_logs(actor_id, created_at)`.
+Derived: `slug` (title + 8 chars of id, trigger), `search_vector` (generated, weighted
+title/provider > summary > description).
 
-## 4. Data ownership and access (summary — full policies in SECURITY.md once written)
+Database-enforced rules:
 
-| Table                             | Visitor       | Member               | Contributor    | Moderator    | Admin                |
-| --------------------------------- | ------------- | -------------------- | -------------- | ------------ | -------------------- |
-| opportunities (published)         | read via view | read                 | read           | read/write   | read/write           |
-| opportunities (own non-published) | –             | own (if D-03 allows) | own draft/edit | all          | all                  |
-| saved_opportunities               | –             | own                  | own            | own          | own                  |
-| profiles                          | –             | own                  | own            | limited read | read                 |
-| user_roles                        | –             | own read             | own read       | read         | read/write (via RPC) |
-| reports                           | –             | insert               | insert         | read/update  | read/update          |
-| audit_logs                        | –             | –                    | –              | –            | read                 |
+| Rule | Constraint |
+|---|---|
+| All URLs `https://` only (BR-04/05) | `private.is_https_url()` checks |
+| Published ⇒ reviewed (D-02, BR-10) | `status <> 'published' or (verification_status <> 'unverified' and published_at is not null)` |
+| Published ⇒ application route | `application_url` or `application_instructions` present |
+| Coherent dates / ages | `opens_at <= closes_at`; `age_min <= age_max` |
+| Expired never active (BR-03) | Expiry derived: `public_opportunities.is_closed`; publishing a past-deadline item is refused |
 
-## 5. Deferred entities (P1+)
+The provider is stored on each opportunity (`provider_name`, `provider_url`). A separate
+organisations table is deferred to partner profiles (P1).
 
-`mentors`, `mentorship_requests`, `community_events`, `community_submissions`,
-`notifications`, `organisation_members` (partner accounts). Not created until their
-requirements and safeguarding rules are approved.
+### 3.2 Public read model
 
-## 6. Seed-data strategy
+`public_opportunities` (view) exposes **only published rows and only public columns**
+(no `submitted_by`, `verification_notes`, `status`), plus `is_closed`. It runs with the
+owner's rights so anonymous users never need access to the base table. Supabase's linter
+will flag it as a "security definer view"; this is intentional and covered by tests.
 
-- `supabase/seed.sql` contains **development fixtures only**, clearly marked
-  `[SAMPLE]` in titles and pointing to `https://example.org` URLs, so they can never be
-  mistaken for real opportunities.
-- Reference data (categories, provinces) is created in migrations, not seed files.
-- Production receives no seed data.
+## 4. Workflow functions (RPC)
+
+| Function | Who | Effect |
+|---|---|---|
+| `submit_opportunity(id)` | Owner | draft / changes_requested → pending_review |
+| `review_opportunity(id, action, note, verification)` | Moderator, admin | request_changes, reject, publish, unpublish, archive, set_verification. Writes a review record and audit entry in the same transaction |
+| `resolve_report(id, outcome, note)` | Moderator, admin | open → dismissed/actioned; audited |
+| `set_user_role(user, role, grant)` | Admin | Grant/revoke role; not own; audited |
+| `delete_my_account()` | Signed-in user | Deletes auth user (cascades); last admin refused |
+
+## 5. Access matrix (enforced by RLS + privileges)
+
+| Table | Anon | Member | Moderator | Admin |
+|---|---|---|---|---|
+| `public_opportunities` | read | read | read | read |
+| `opportunities` | – | read own; insert as draft/pending; edit own draft/changes_requested; delete own draft | read/edit all; status via RPC | same as moderator |
+| `opportunity_reviews` | – | read reviews of own submissions | read | read |
+| `saved_opportunities` | – | own only | own only | own only |
+| `reports` | – | insert; read own | read; resolve via RPC | same |
+| `profiles` | – | own (limited columns editable) | own | read all |
+| `user_roles` | – | own | own | read all; change via RPC |
+| `consent_records` | – | own | own | own |
+| `audit_logs` | – | – | – | read |
+| resources & categories | read published/active | same | full CRUD | full CRUD |
+
+## 6. Rate limits (database)
+
+- Opportunity submissions: 10 per member per 24 h (staff exempt).
+- Reports: 20 per member per 24 h.
+
+## 7. Seed-data strategy
+
+- `supabase/seed.sql`: **development fixtures only**, titled `[SAMPLE]`, URLs on
+  `example.org`, loaded by `supabase db reset` locally. Never loaded into production.
+- Reference data (categories) is created by migrations.
+- **First administrator:** there is no self-service path to admin. An operator grants it
+  once with SQL (Supabase SQL editor / `psql` as `postgres`):
+  `insert into public.user_roles (user_id, role) values ('<user uuid>', 'admin');`
+  Further roles are managed through `set_user_role()`.
+
+## 8. Deferred entities (P1+)
+
+`organisations` / partner profiles, `mentors`, `mentorship_requests`, `community_events`,
+`community_submissions`, `notifications`. Not created until requirements and safeguarding
+rules are approved.

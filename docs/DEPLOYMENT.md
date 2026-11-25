@@ -46,6 +46,8 @@ The CSP must be tested against the built app (Vite injects no inline scripts by 
 ## 5. Database migrations (Phase 2+)
 
 - Migrations live in `supabase/migrations/` and are the only way the schema changes.
+- A migration file is **immutable once applied to staging or production**; fix mistakes with a
+  new migration. Before any shared environment exists, unapplied migrations may be amended.
 - Apply to staging first: `supabase db push` against the staging project, run smoke tests.
 - Production: take/confirm a backup, apply, smoke test.
 - **Rollback:** write forward-fix migrations; for destructive changes, restore from backup.
