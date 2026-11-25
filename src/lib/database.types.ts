@@ -292,7 +292,7 @@ export type Database = {
           required_documents?: string | null;
           required_skills?: string | null;
           search_vector?: never;
-          slug: string;
+          slug?: string;
           source_url: string;
           status?: Database['public']['Enums']['opportunity_status'];
           submitted_by?: string | null;
