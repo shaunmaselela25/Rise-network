@@ -1,0 +1,26 @@
+name: Feature request
+description: Propose a change or new capability
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Which user need does this address? Who is affected?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance criteria
+  - type: textarea
+    id: privacy
+    attributes:
+      label: Privacy, safety or legal considerations
+      description: Does this collect new personal data, affect minors, or change moderation?
