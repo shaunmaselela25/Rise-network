@@ -131,3 +131,14 @@ img {
 .button--secondary:hover {
   background: var(--color-surface);
 }
+.button--danger {
+  background: var(--color-danger);
+  color: var(--color-on-danger);
+}
+.button--danger:hover {
+  filter: brightness(0.9);
+}
+.button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

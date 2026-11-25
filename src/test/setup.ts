@@ -1,6 +1,9 @@
 import '@testing-library/jest-dom/vitest';
-import { cleanup } from '@testing-library/react';
+import { cleanup, configure } from '@testing-library/react';
 import { afterEach, vi } from 'vitest';
+
+// Lazy routes load asynchronously; the first dynamic import can be slow under test.
+configure({ asyncUtilTimeout: 5000 });
 
 afterEach(() => {
   cleanup();

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router';
 import { SiteHeader } from '../components/SiteHeader';
 import { SiteFooter } from '../components/SiteFooter';
+import { AuthProvider } from '../features/auth/AuthProvider';
 import styles from './Layout.module.css';
 
 export function Layout() {
@@ -21,15 +22,17 @@ export function Layout() {
   }, [pathname]);
 
   return (
-    <div className={styles.shell}>
-      <a className={styles.skipLink} href="#main-content">
-        Skip to main content
-      </a>
-      <SiteHeader />
-      <main id="main-content" ref={mainRef} tabIndex={-1} className={styles.main}>
-        <Outlet />
-      </main>
-      <SiteFooter />
-    </div>
+    <AuthProvider>
+      <div className={styles.shell}>
+        <a className={styles.skipLink} href="#main-content">
+          Skip to main content
+        </a>
+        <SiteHeader />
+        <main id="main-content" ref={mainRef} tabIndex={-1} className={styles.main}>
+          <Outlet />
+        </main>
+        <SiteFooter />
+      </div>
+    </AuthProvider>
   );
 }

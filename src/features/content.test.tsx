@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { renderRoute } from '../test/renderRoute';
 
@@ -37,6 +37,22 @@ describe('content integrity', () => {
       for (const sentence of guaranteeSentences) {
         expect(sentence).toMatch(/\b(not|cannot|no|never|cautious)\b/i);
       }
+    },
+  );
+
+  it.each(['/register', '/sign-in', '/forgot-password', '/account'])(
+    '%s says accounts are unavailable when no backend is configured (no dead forms)',
+    async (path) => {
+      renderRoute(path);
+      expect(
+        await screen.findByRole('heading', { level: 1, name: /accounts are not available/i }),
+      ).toBeInTheDocument();
+      expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+      expect(
+        within(screen.getByRole('navigation', { name: 'Main' })).queryByRole('link', {
+          name: /sign in/i,
+        }),
+      ).not.toBeInTheDocument();
     },
   );
 

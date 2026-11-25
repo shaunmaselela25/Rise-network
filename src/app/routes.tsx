@@ -10,17 +10,23 @@ import { NotFoundPage } from '../features/info/NotFoundPage';
 import { OpportunitiesPage } from '../features/opportunities/OpportunitiesPage';
 import { LearningPage } from '../features/learning/LearningPage';
 import { CareersPage } from '../features/careers/CareersPage';
+import { AccountDeletedPage } from '../features/profile/AccountDeletedPage';
 
 /**
  * Application route table. Exported so tests can mount it with a memory router.
- * Routes are eagerly imported while pages are small; switch to `lazy` per route
- * when a feature's bundle grows (tracked against NFR-001).
+ * Public information pages are bundled eagerly. Pages that need the Supabase client
+ * are loaded on demand so public pages stay light (NFR-001).
  */
 export const routes: RouteObject[] = [
   {
     path: '/',
     element: <Layout />,
     errorElement: <RouteErrorPage />,
+    hydrateFallbackElement: (
+      <p className="container" role="status">
+        Loading…
+      </p>
+    ),
     children: [
       { index: true, element: <HomePage /> },
       { path: 'opportunities', element: <OpportunitiesPage /> },
@@ -30,6 +36,36 @@ export const routes: RouteObject[] = [
       { path: 'contact', element: <ContactPage /> },
       { path: 'privacy', element: <PrivacyPage /> },
       { path: 'terms', element: <TermsPage /> },
+      {
+        path: 'register',
+        lazy: () =>
+          import('../features/auth/RegisterPage').then((m) => ({ Component: m.RegisterPage })),
+      },
+      {
+        path: 'sign-in',
+        lazy: () =>
+          import('../features/auth/SignInPage').then((m) => ({ Component: m.SignInPage })),
+      },
+      {
+        path: 'forgot-password',
+        lazy: () =>
+          import('../features/auth/ForgotPasswordPage').then((m) => ({
+            Component: m.ForgotPasswordPage,
+          })),
+      },
+      {
+        path: 'reset-password',
+        lazy: () =>
+          import('../features/auth/ResetPasswordPage').then((m) => ({
+            Component: m.ResetPasswordPage,
+          })),
+      },
+      {
+        path: 'account',
+        lazy: () =>
+          import('../features/profile/AccountRoute').then((m) => ({ Component: m.AccountRoute })),
+      },
+      { path: 'account-deleted', element: <AccountDeletedPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },

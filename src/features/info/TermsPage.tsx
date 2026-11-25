@@ -1,7 +1,7 @@
 import { Notice } from '../../components/Notice';
 import { usePageTitle } from '../../lib/usePageTitle';
 
-export const TERMS_VERSION = '0.1-draft';
+import { TERMS_VERSION } from '../../lib/policies';
 
 export function TermsPage() {
   usePageTitle('Terms of use');
@@ -11,7 +11,7 @@ export function TermsPage() {
       <Notice title="Draft — pending legal review">
         <p>
           This is a working draft (version {TERMS_VERSION}). It is not legal advice and will be
-          reviewed before RISE NETWORK launches accounts.
+          reviewed before RISE NETWORK launches publicly.
         </p>
       </Notice>
 
