@@ -14,7 +14,7 @@ export function SiteHeader() {
     status === 'signed_in'
       ? [
           { to: '/saved', label: 'Saved' },
-          ...(isStaff(roles) ? [{ to: '/moderation', label: 'Moderation' }] : []),
+          ...(isStaff(roles) ? [{ to: '/staff', label: 'Staff' }] : []),
           { to: '/account', label: 'My account' },
         ]
       : status === 'signed_out'
@@ -64,6 +64,8 @@ export function SiteHeader() {
               <li key={item.to}>
                 <NavLink
                   to={item.to}
+                  // Close immediately: lazily loaded pages change the URL only once loaded.
+                  onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
                     `${styles.navLink} ${isActive ? styles.navLinkActive : ''}`
                   }
