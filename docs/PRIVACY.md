@@ -1,11 +1,15 @@
 # RISE NETWORK — Privacy Engineering
 
-> **Status:** Phase 1. The current build **collects no personal information** (no accounts,
-> forms, cookies, analytics or tracking scripts). This document records the planned data
-> inventory for review. It is not legal advice; POPIA compliance requires review by a
-> qualified person. Last updated: 2026-11-25.
+> **Status:** Phase 2. Accounts are implemented (not deployed). When a backend is configured
+> the app collects the account data marked **Implemented** below; there are still no
+> analytics, advertising or tracking scripts. This is not legal advice; POPIA compliance
+> requires review by a qualified person. Last updated: 2026-11-25.
+>
+> **Implemented now:** email, password hash, display name, province, education level,
+> 18+ confirmation timestamp, consent records, audit references. **Schema exists, UI not yet
+> built:** submissions, saved opportunities, reports. **Not implemented:** interests UI.
 
-## 1. Planned data inventory (Phase 2+)
+## 1. Data inventory
 
 | Data                                  | Purpose                                                   | Justification (POPIA s11) | Collected at           | Stored in                          | Access                          | Retention (proposed)                                 | Deletion                                       | Shared with                          |
 | ------------------------------------- | --------------------------------------------------------- | ------------------------- | ---------------------- | ---------------------------------- | ------------------------------- | ---------------------------------------------------- | ---------------------------------------------- | ------------------------------------ |
@@ -25,12 +29,13 @@
 **Not collected:** identity numbers, financial information, health information, race,
 religion, biometric data, precise location, CVs or documents.
 
-## 2. Children (open decision D-01)
+## 2. Children (D-01 approved 2026-11-25)
 
 POPIA defines a child as under 18 and requires consent from a competent person to process a
-child's personal information. Recommendation: allow browsing without an account for all ages;
-restrict account registration to 18+ for MVP until a legally reviewed approach for minors
-exists. Registration will not ship until D-01 is decided.
+child's personal information. Decision: browsing is open to all ages;
+account registration is restricted to 18+ (self-declared, enforced by the sign-up database
+trigger) until a legally reviewed approach for minors exists. Self-declaration cannot verify
+age (KNOWN_ISSUES KI-011).
 
 ## 3. Cross-border processing (open decision D-08)
 

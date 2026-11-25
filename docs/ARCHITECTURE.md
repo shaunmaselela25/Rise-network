@@ -1,7 +1,7 @@
 # RISE NETWORK — Architecture
 
-> **Status:** Phase 1 implemented (frontend shell). Backend (Supabase) is **designed, not
-> yet implemented**. Last updated: 2026-11-25.
+> **Status:** Phases 1–2 implemented and verified locally: frontend shell, Supabase schema
+> with RLS, authentication and account management. Not deployed. Last updated: 2026-11-25.
 
 ## 1. Overview
 
@@ -57,12 +57,16 @@ src/
   app/          App shell: router, layout, providers, error boundary
   components/   Shared, presentational UI (design system)
   features/     Business capabilities — each owns its pages, components, data access, rules
-    home/  info/  opportunities/  learning/  careers/  (auth/ profile/ admin/ — Phase 2+)
+    home/  info/  opportunities/  learning/  careers/  auth/  profile/  (admin/ — Phase 5)
   lib/          Cross-cutting utilities (env, formatting)
   styles/       Design tokens and global styles
 ```
 
 Rules:
+
+- `features/auth` exposes `useAuth()` / `RequireAuth` as its public API for other features.
+- Pages that need the Supabase client are lazy-loaded routes; the client itself is loaded
+  after first render so public pages do not download it (NFR-001).
 
 - A feature may import from `components/` and `lib/`, not from another feature's internals.
   Shared domain logic moves into `lib/` only when a second feature needs it.
@@ -70,7 +74,7 @@ Rules:
   plain TypeScript modules with unit tests. The UI uses them for display; the database
   remains authoritative.
 
-## 4. Data flow (planned, Phase 2–3)
+## 4. Data flow (database implemented; screens for 2–4 are Phase 3)
 
 1. Visitor opens `/opportunities?q=bursary&province=GP` → SPA reads URL state → queries the
    `public_opportunities` view via PostgREST (server-side filtering, pagination).
@@ -93,9 +97,9 @@ Rules:
 
 ## 6. External dependencies
 
-| Dependency                           | Purpose                       | Status                |
-| ------------------------------------ | ----------------------------- | --------------------- |
-| Supabase (Postgres, Auth, PostgREST) | Data, auth, API               | Planned — Phase 2     |
-| SMTP provider (via Supabase Auth)    | Confirmation and reset emails | Planned — Phase 2     |
-| Static host (D-07)                   | Serving SPA, TLS, headers     | Planned — Phase 7     |
-| GitHub Actions                       | CI                            | Implemented — Phase 1 |
+| Dependency                           | Purpose                       | Status                                                             |
+| ------------------------------------ | ----------------------------- | ------------------------------------------------------------------ |
+| Supabase (Postgres, Auth, PostgREST) | Data, auth, API               | Implemented — local stack (CLI 3.4.0); hosted project pending D-08 |
+| SMTP provider (via Supabase Auth)    | Confirmation and reset emails | Local: Mailpit. Production SMTP provider: Phase 7                  |
+| Static host (D-07)                   | Serving SPA, TLS, headers     | Planned — Phase 7                                                  |
+| GitHub Actions                       | CI                            | Implemented — Phase 1                                              |

@@ -8,6 +8,20 @@ All notable changes are recorded here. Format based on
 
 ### Added
 
+- Phase 2: Supabase local stack configuration (hardened auth settings, explicit API grants,
+  unused services disabled, ports 55320–55329).
+- Database migrations: profiles, roles, consent records, append-only audit log;
+  opportunities with moderation workflow, saved opportunities, reports, public read model;
+  learning and career resources; account deletion. RLS on every table.
+- 70 pgTAP database tests; database CI job; integration e2e for the account journey.
+- Accounts UI: register (18+, consent), sign in/out, password reset, profile, delete account.
+- Product-owner decisions D-01..D-06 and D-10 recorded as approved.
+
+### Changed
+
+- Privacy notice draft now describes account data actually collected.
+- Auth and account pages and the Supabase client are code-split from the initial bundle.
+
 - Phase 0 documentation: product requirements catalogue, assumptions register, open
   decisions, architecture, proposed data model, roadmap, ADR-0001 to ADR-0005.
 - Phase 1 foundation: Vite + React + TypeScript (strict), ESLint, Prettier, Vitest,

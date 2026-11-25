@@ -28,15 +28,15 @@ Measurable, privacy-conscious impact.
 
 ## 2. Stakeholders and personas
 
-| Role                         | Description                                            | Authentication                |
-| ---------------------------- | ------------------------------------------------------ | ----------------------------- |
-| Visitor                      | Unregistered person browsing public content            | None                          |
-| Member                       | Registered young person / community member             | Required                      |
+| Role                         | Description                                                | Authentication                     |
+| ---------------------------- | ---------------------------------------------------------- | ---------------------------------- |
+| Visitor                      | Unregistered person browsing public content                | None                               |
+| Member                       | Registered young person / community member                 | Required                           |
 | Contributor                  | Any signed-in member who submits content for review (D-03) | Required (no separate role in MVP) |
-| Moderator                    | Reviews submissions and reports; cannot manage roles   | Required + `moderator` role   |
-| Administrator                | Full operational control incl. roles and configuration | Required + `admin` role       |
-| Mentor _(P1+)_               | Approved mentor (approval workflow required first)     | Required + approval           |
-| Partner organisation _(P1+)_ | Approved organisation that may submit content          | Required + approval           |
+| Moderator                    | Reviews submissions and reports; cannot manage roles       | Required + `moderator` role        |
+| Administrator                | Full operational control incl. roles and configuration     | Required + `admin` role            |
+| Mentor _(P1+)_               | Approved mentor (approval workflow required first)         | Required + approval                |
+| Partner organisation _(P1+)_ | Approved organisation that may submit content              | Required + approval                |
 
 **Personas (working assumptions, to be validated with real users):**
 
@@ -311,16 +311,16 @@ On **2026-11-25** the product owner instructed: "go with the recommendations". D
 D-01 to D-06 and D-10 are therefore **approved as recommended**. D-07, D-08, D-09 and D-11
 need information or action only the product owner can provide and remain **open**.
 
-| ID   | Decision | Status | Outcome |
-| ---- | -------- | ------ | ------- |
-| D-01 | May minors register? | Approved 2026-11-25 | Browsing open to all ages. Account registration 18+ for MVP (self-declared age confirmation at sign-up). Revisit with legal advice before allowing minors. |
-| D-02 | Publish unverified listings? | Approved 2026-11-25 | Publish only after human review. `verification_status` must be `source_checked` or `provider_confirmed` at the moment of publishing; `unverified` is never published. |
-| D-03 | Who can submit opportunities? | Approved 2026-11-25 | Any signed-in member may submit for review; only moderators/admins publish. The `contributor` role is not needed for MVP and is not created. |
-| D-04 | Anonymous reports? | Approved 2026-11-25 | Signed-in reports only for MVP; public contact channel once D-09 is decided. |
-| D-05 | Contributor content on account deletion | Approved 2026-11-25 | Keep content; set `submitted_by` to null. |
-| D-06 | Freshness interval | Approved 2026-11-25 | Flag published listings not checked in 30 days. |
-| D-07 | Hosting provider and domain | Open | Needed before Phase 7. |
-| D-08 | Supabase account ownership and region | Open (recommendation accepted in principle) | Product owner creates and owns the Supabase account; region to be recorded in PRIVACY.md. Not needed for local development. |
-| D-09 | Official contact email | Open | Needed before public launch. |
-| D-10 | Brand colours / logo | Approved 2026-11-25 | Interim palette (ADR-0004) until a brand is designed. |
-| D-11 | POPIA Information Officer | Open | Product owner to designate before launch. |
+| ID   | Decision                                | Status                                      | Outcome                                                                                                                                                               |
+| ---- | --------------------------------------- | ------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D-01 | May minors register?                    | Approved 2026-11-25                         | Browsing open to all ages. Account registration 18+ for MVP (self-declared age confirmation at sign-up). Revisit with legal advice before allowing minors.            |
+| D-02 | Publish unverified listings?            | Approved 2026-11-25                         | Publish only after human review. `verification_status` must be `source_checked` or `provider_confirmed` at the moment of publishing; `unverified` is never published. |
+| D-03 | Who can submit opportunities?           | Approved 2026-11-25                         | Any signed-in member may submit for review; only moderators/admins publish. The `contributor` role is not needed for MVP and is not created.                          |
+| D-04 | Anonymous reports?                      | Approved 2026-11-25                         | Signed-in reports only for MVP; public contact channel once D-09 is decided.                                                                                          |
+| D-05 | Contributor content on account deletion | Approved 2026-11-25                         | Keep content; set `submitted_by` to null.                                                                                                                             |
+| D-06 | Freshness interval                      | Approved 2026-11-25                         | Flag published listings not checked in 30 days.                                                                                                                       |
+| D-07 | Hosting provider and domain             | Open                                        | Needed before Phase 7.                                                                                                                                                |
+| D-08 | Supabase account ownership and region   | Open (recommendation accepted in principle) | Product owner creates and owns the Supabase account; region to be recorded in PRIVACY.md. Not needed for local development.                                           |
+| D-09 | Official contact email                  | Open                                        | Needed before public launch.                                                                                                                                          |
+| D-10 | Brand colours / logo                    | Approved 2026-11-25                         | Interim palette (ADR-0004) until a brand is designed.                                                                                                                 |
+| D-11 | POPIA Information Officer               | Open                                        | Product owner to designate before launch.                                                                                                                             |

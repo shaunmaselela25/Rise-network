@@ -8,12 +8,13 @@
 A runtime dependency is added only when a feature that needs it is being built, and its
 purpose is recorded in this table.
 
-| Package               | Added in          | Purpose         |
-| --------------------- | ----------------- | --------------- |
-| react, react-dom      | Phase 1           | UI              |
-| react-router          | Phase 1           | Routing         |
-| @supabase/supabase-js | Phase 2 (planned) | API/auth client |
-| zod                   | Phase 2 (planned) | Validation      |
+| Package               | Added in | Purpose                                                        |
+| --------------------- | -------- | -------------------------------------------------------------- |
+| react, react-dom      | Phase 1  | UI                                                             |
+| react-router          | Phase 1  | Routing                                                        |
+| @supabase/supabase-js | Phase 2  | API/auth client (lazy-loaded chunk)                            |
+| zod                   | Phase 2  | Form and config validation                                     |
+| supabase (dev)        | Phase 2  | CLI: local stack, migrations, pgTAP tests (pinned per project) |
 
 Not adopted for MVP: global state libraries (Redux/Zustand), UI component kits, CSS
 frameworks, data-fetching libraries, date libraries. Styling uses plain CSS with design
