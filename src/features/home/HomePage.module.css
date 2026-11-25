@@ -1,0 +1,71 @@
+.hero {
+  margin-top: calc(-1 * var(--space-6));
+  padding-block: var(--space-7);
+  background: var(--color-surface);
+  border-bottom: var(--border);
+}
+
+.eyebrow {
+  color: var(--color-accent-text);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-3);
+}
+
+.heading {
+  max-width: 22ch;
+}
+
+.intro {
+  max-width: var(--reading-width);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  margin-top: var(--space-5);
+}
+
+.section {
+  margin-top: var(--space-7);
+}
+
+.cards {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+
+.card {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  background: var(--color-surface-raised);
+}
+.card p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.principles {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: var(--space-2) var(--space-6);
+}
+
+.principleTitle {
+  font-size: var(--font-size-base);
+  margin-bottom: var(--space-1);
+}
+
+@media (min-width: 48rem) {
+  .cards {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .principles {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
