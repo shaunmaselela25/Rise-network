@@ -128,6 +128,9 @@ function Directory() {
                 }))}
               />
               <SelectField
+                // Remount only this select when its options arrive, so its defaultValue
+                // applies without resetting anything else the user has typed.
+                key={`category-${categories.status}`}
                 label="Field"
                 name="category"
                 showOptional={false}

@@ -240,7 +240,7 @@ describe('submitting an opportunity (FR-008)', () => {
     const { user, router } = renderRoute('/submit');
     await screen.findByRole('heading', { level: 1, name: /submit an opportunity/i });
 
-    await user.click(screen.getByRole('button', { name: 'Submit for review' }));
+    await user.click(await screen.findByRole('button', { name: 'Submit for review' }));
     expect(await screen.findByText(/correct the highlighted fields/i)).toBeInTheDocument();
     expect(client.callsTo('opportunities', 'insert')).toHaveLength(0);
 
@@ -270,5 +270,46 @@ describe('submitting an opportunity (FR-008)', () => {
     for (const forbidden of ['verification_status', 'published_at', 'submitted_by', 'slug']) {
       expect(payload).not.toHaveProperty(forbidden);
     }
+  });
+});
+
+describe('category selects keep their value once categories load (regression)', () => {
+  it('shows the category filter from the URL as selected', async () => {
+    useClient({
+      tables: {
+        opportunity_categories: categories,
+        public_opportunities: { data: [], error: null, count: 0 },
+      },
+    });
+    renderRoute('/opportunities?category=engineering');
+    await screen.findByText('0 opportunities found');
+    await waitFor(() =>
+      expect(screen.getByRole('combobox', { name: 'Field' })).toHaveValue('engineering'),
+    );
+  });
+
+  it('keeps the saved category when editing a submission', async () => {
+    useClient({
+      session: fakeSession(),
+      tables: {
+        opportunity_categories: categories,
+        user_roles: { data: [], error: null },
+        opportunities: {
+          data: [
+            {
+              ...opportunity(),
+              status: 'draft',
+              verification_notes: null,
+              submitted_by: '11111111-1111-1111-1111-111111111111',
+              created_at: '2026-11-20T10:00:00Z',
+            },
+          ],
+          error: null,
+        },
+        opportunity_reviews: { data: [], error: null },
+      },
+    });
+    renderRoute('/my-submissions/a1b2c3d4-0000-0000-0000-000000000001');
+    expect(await screen.findByRole('combobox', { name: 'Field' })).toHaveValue('engineering');
   });
 });

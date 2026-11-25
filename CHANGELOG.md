@@ -6,6 +6,28 @@ All notable changes are recorded here. Format based on
 
 ## [Unreleased]
 
+### Added — Phase 4 (learning and careers)
+
+- Learning directory with title search (wildcards matched literally) and category, level,
+  format and cost filters; factual cost labels; no-accreditation notice.
+- Career guides grouped by topic, with plain-text guide pages.
+- Staff hub (`/staff`) and content management for learning resources and career guides:
+  create, edit, publish, archive; slug suggestions; duplicate-slug message.
+- Resource integration e2e journey with axe scans.
+
+### Fixed
+
+- Category dropdowns lost their selected value when options loaded after the form
+  (editing submissions and learning resources could not be saved; directory filters did not
+  show the selected category). Found by the Phase 4 integration test; regression tests added.
+- Mobile menu now closes as soon as a link is chosen (lazily loaded pages update the URL
+  only after loading).
+
+### Changed
+
+- Shared error handling and loading/error components moved to `lib/` and `components/`.
+- Header "Moderation" link replaced by "Staff" hub link.
+
 ### Added — Phase 3 (opportunities)
 
 - Opportunity directory: full-text search, filters (type, field, province, qualification,

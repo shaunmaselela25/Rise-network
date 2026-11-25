@@ -14,6 +14,7 @@ import {
 } from './labels';
 import { submissionSchema, type SubmissionFormValues } from './submissionSchema';
 import { errorMessage, useOpportunityData } from './useOpportunityData';
+import { LoadError, Loading } from '../../components/AsyncStates';
 
 type Intent = 'draft' | 'submit';
 
@@ -88,6 +89,13 @@ export function SubmissionForm({
   }
 
   const v = (name: (typeof FIELD_NAMES)[number]) => initialValues[name] ?? '';
+
+  // The category <select> uses defaultValue, which only applies if its option exists on
+  // first render — so render the form once categories have loaded.
+  if (categories.status === 'loading') return <Loading label="Loading form…" />;
+  if (categories.status === 'error') {
+    return <LoadError message={categories.message} onRetry={categories.reload} />;
+  }
 
   return (
     <form
