@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 import { Link } from 'react-router';
-import { FormStatus } from '../../components/form/FormStatus';
 import { deadlineState, deadlineText } from '../../lib/dates';
 import { provinceLabels } from '../../lib/reference';
 import type { OpportunityCardData } from './api';
@@ -67,24 +66,7 @@ export function OpportunityCard({
   );
 }
 
-export function LoadError({ message, onRetry }: { message: string; onRetry: () => void }) {
-  return (
-    <FormStatus kind="error">
-      <p>{message}</p>
-      <button type="button" className="button button--secondary" onClick={onRetry}>
-        Try again
-      </button>
-    </FormStatus>
-  );
-}
-
-export function Loading({ label }: { label: string }) {
-  return (
-    <p role="status" className={styles.loading}>
-      {label}
-    </p>
-  );
-}
+export { LoadError, Loading } from '../../components/AsyncStates';
 
 export function Pagination({
   page,

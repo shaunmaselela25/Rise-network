@@ -1,5 +1,6 @@
 import type { Database } from '../../lib/database.types';
 import { addDays, todaySast } from '../../lib/dates';
+import { toUserFacing, UserFacingError } from '../../lib/errors';
 import { getSupabase, type RiseSupabaseClient } from '../../lib/supabase';
 import { PAGE_SIZE, qualifyingLevels, type OpportunityFilters } from './filters';
 import type { ReportReason, TrackingStatus } from './labels';
@@ -17,8 +18,7 @@ export type Report = Public['Tables']['reports']['Row'];
 export type ReviewAction = Public['Enums']['review_action'];
 export type VerificationStatus = Public['Enums']['verification_status'];
 
-/** Error with a message that is safe to show to users. */
-export class UserFacingError extends Error {}
+export { UserFacingError };
 
 function client(): RiseSupabaseClient {
   const supabase = getSupabase();
@@ -27,11 +27,7 @@ function client(): RiseSupabaseClient {
 }
 
 function fail(error: { code?: string; message?: string }, fallback: string): never {
-  // Database errors are logged for developers but never shown verbatim to users.
-  console.error(error);
-  if (error.code === '54000') throw new UserFacingError(error.message ?? fallback); // rate limit
-  if (error.code === '22023') throw new UserFacingError(error.message ?? fallback); // rule violation
-  throw new UserFacingError(fallback);
+  throw toUserFacing(error, fallback);
 }
 
 // Explicit public column list (never select *; search_vector is not needed by the UI).
