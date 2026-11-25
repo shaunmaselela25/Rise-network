@@ -39,6 +39,7 @@ export function createQueryClient(options: {
       'range',
       'limit',
       'textSearch',
+      'ilike',
     ]) {
       chain[method] = (...args: unknown[]) => {
         log.push({ method, args });

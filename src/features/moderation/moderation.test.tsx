@@ -75,7 +75,7 @@ describe('moderation access (FR-009)', () => {
     expect(client.callsTo('opportunities', 'select')).toHaveLength(0);
   });
 
-  it('shows the review queue and Moderation link to staff', async () => {
+  it('shows the review queue and Staff link to staff', async () => {
     useClient(['moderator']);
     renderRoute('/moderation');
     expect(await screen.findByRole('link', { name: 'Pending internship' })).toHaveAttribute(
@@ -84,7 +84,7 @@ describe('moderation access (FR-009)', () => {
     );
     expect(
       within(screen.getByRole('navigation', { name: 'Main' })).getByRole('link', {
-        name: 'Moderation',
+        name: 'Staff',
       }),
     ).toBeInTheDocument();
   });

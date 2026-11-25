@@ -7,8 +7,6 @@ import { ContactPage } from '../features/info/ContactPage';
 import { PrivacyPage } from '../features/info/PrivacyPage';
 import { TermsPage } from '../features/info/TermsPage';
 import { NotFoundPage } from '../features/info/NotFoundPage';
-import { LearningPage } from '../features/learning/LearningPage';
-import { CareersPage } from '../features/careers/CareersPage';
 import { AccountDeletedPage } from '../features/profile/AccountDeletedPage';
 
 /**
@@ -82,8 +80,70 @@ export const routes: RouteObject[] = [
         lazy: () =>
           import('../features/moderation/staffRoutes').then((m) => ({ Component: m.ReviewRoute })),
       },
-      { path: 'learning', element: <LearningPage /> },
-      { path: 'careers', element: <CareersPage /> },
+      {
+        path: 'learning',
+        lazy: () =>
+          import('../features/learning/LearningPage').then((m) => ({ Component: m.LearningPage })),
+      },
+      {
+        path: 'careers',
+        lazy: () =>
+          import('../features/careers/CareersPage').then((m) => ({ Component: m.CareersPage })),
+      },
+      {
+        path: 'careers/:slug',
+        lazy: () =>
+          import('../features/careers/CareerGuidePage').then((m) => ({
+            Component: m.CareerGuidePage,
+          })),
+      },
+      {
+        path: 'staff',
+        lazy: () =>
+          import('../features/manage/staffRoutes').then((m) => ({ Component: m.StaffHomeRoute })),
+      },
+      {
+        path: 'staff/learning',
+        lazy: () =>
+          import('../features/manage/staffRoutes').then((m) => ({
+            Component: m.ManageLearningRoute,
+          })),
+      },
+      {
+        path: 'staff/learning/new',
+        lazy: () =>
+          import('../features/manage/staffRoutes').then((m) => ({
+            Component: m.LearningEditorRoute,
+          })),
+      },
+      {
+        path: 'staff/learning/:id',
+        lazy: () =>
+          import('../features/manage/staffRoutes').then((m) => ({
+            Component: m.LearningEditorRoute,
+          })),
+      },
+      {
+        path: 'staff/careers',
+        lazy: () =>
+          import('../features/manage/staffRoutes').then((m) => ({
+            Component: m.ManageCareersRoute,
+          })),
+      },
+      {
+        path: 'staff/careers/new',
+        lazy: () =>
+          import('../features/manage/staffRoutes').then((m) => ({
+            Component: m.CareerEditorRoute,
+          })),
+      },
+      {
+        path: 'staff/careers/:id',
+        lazy: () =>
+          import('../features/manage/staffRoutes').then((m) => ({
+            Component: m.CareerEditorRoute,
+          })),
+      },
       { path: 'about', element: <AboutPage /> },
       { path: 'contact', element: <ContactPage /> },
       { path: 'privacy', element: <PrivacyPage /> },

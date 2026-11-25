@@ -1,0 +1,130 @@
+/* Shared listing styles for resource directories (learning, careers, staff lists). */
+.layout {
+  display: grid;
+  gap: var(--space-6);
+}
+@media (min-width: 60rem) {
+  .layout {
+    grid-template-columns: 18rem 1fr;
+    align-items: start;
+  }
+}
+
+.filters {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  background: var(--color-surface);
+}
+.filters summary {
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.filterFields {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.searchRow {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+.searchRow > div {
+  flex: 1 1 16rem;
+}
+
+.resultsCount {
+  margin: 0 0 var(--space-4);
+  font-weight: 600;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+@media (min-width: 48rem) {
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  background: var(--color-surface-raised);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.cardMeta {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+.cardTitle {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-1);
+}
+.cardSummary {
+  color: var(--color-text-muted);
+  flex: 1;
+}
+.cardFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  font-size: var(--font-size-sm);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+
+.empty {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.prewrap {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.section {
+  margin-top: var(--space-6);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border);
+  vertical-align: top;
+}
+.tableWrap {
+  overflow-x: auto;
+}

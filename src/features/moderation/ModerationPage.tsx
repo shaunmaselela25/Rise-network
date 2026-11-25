@@ -34,6 +34,9 @@ export function ModerationPage() {
 
   return (
     <div className="container">
+      <p>
+        <Link to="/staff">← Staff</Link>
+      </p>
       <h1>Moderation</h1>
       <nav aria-label="Moderation sections" className={styles.actions}>
         {tabs.map((t) => (
