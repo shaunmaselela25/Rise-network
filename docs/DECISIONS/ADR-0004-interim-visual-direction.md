@@ -11,8 +11,8 @@ professional look, and forbids inventing a final identity without recording it.
 ## Decision
 
 - **Wordmark:** text "RISE NETWORK" in the system font, bold, letter-spaced. No logo image.
-- **Palette:** deep teal primary (`#0f5c5a`, ≥ 7:1 on white), warm amber accent used
-  sparingly for highlights (`#b45309` for text, ≥ 4.5:1 on white), neutral slate greys.
+- **Palette:** deep teal primary (`#0f5c5a`, 7.8:1 on white), warm amber accent used
+  sparingly for highlights (`#8a3f05` for text, 7.5:1 on white), neutral slate greys.
   A dark theme mirrors the tokens.
 - **Typography:** system font stack (no web-font download — saves data on mobile);
   base 16 px, modular scale 1.25.

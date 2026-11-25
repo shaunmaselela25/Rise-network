@@ -11,18 +11,18 @@ custom authentication.
 
 ## Decision
 
-| Concern | Choice | Reason |
-|---|---|---|
-| UI | React 19 + TypeScript (strict) | Widely known, large talent pool, strong typing |
-| Build | Vite | Fast, simple, static output that any CDN can host |
-| Routing | React Router (data-free "declarative" mode) | De-facto standard, lazy routes for code splitting |
-| Data/API | Supabase (PostgreSQL + PostgREST) | Relational model, RLS for database-enforced authorisation, migrations in git |
-| Auth | Supabase Auth | Mature provider; avoids custom auth |
-| Validation | Zod (from Phase 2) | One validation library shared by forms and data parsing |
-| Unit/component tests | Vitest + React Testing Library + jest-dom | Native Vite integration |
-| E2E | Playwright | Cross-browser, mobile viewports, reliable |
-| Quality | ESLint (typescript-eslint, react-hooks, jsx-a11y), Prettier | Static checks, accessibility linting |
-| CI | GitHub Actions | Repository is on GitHub |
+| Concern              | Choice                                                      | Reason                                                                       |
+| -------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| UI                   | React 19 + TypeScript (strict)                              | Widely known, large talent pool, strong typing                               |
+| Build                | Vite                                                        | Fast, simple, static output that any CDN can host                            |
+| Routing              | React Router (data router, `createBrowserRouter`)           | Route-level error boundaries; lazy routes later                              |
+| Data/API             | Supabase (PostgreSQL + PostgREST)                           | Relational model, RLS for database-enforced authorisation, migrations in git |
+| Auth                 | Supabase Auth                                               | Mature provider; avoids custom auth                                          |
+| Validation           | Zod (from Phase 2)                                          | One validation library shared by forms and data parsing                      |
+| Unit/component tests | Vitest + React Testing Library + jest-dom                   | Native Vite integration                                                      |
+| E2E                  | Playwright                                                  | Cross-browser, mobile viewports, reliable                                    |
+| Quality              | ESLint (typescript-eslint, react-hooks, jsx-a11y), Prettier | Static checks, accessibility linting                                         |
+| CI                   | GitHub Actions                                              | Repository is on GitHub                                                      |
 
 ## Alternatives considered
 

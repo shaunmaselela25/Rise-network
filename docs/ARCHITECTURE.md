@@ -83,19 +83,19 @@ Rules:
 
 ## 5. Key decisions
 
-| ADR | Decision |
-|---|---|
-| [0001](DECISIONS/ADR-0001-technology-stack.md) | React + TypeScript + Vite SPA; Supabase (Postgres, Auth); Vitest/RTL/Playwright |
-| [0002](DECISIONS/ADR-0002-modular-monolith-database-enforced-rules.md) | Modular monolith; authorisation and integrity enforced in Postgres |
-| [0003](DECISIONS/ADR-0003-minimal-dependencies.md) | Minimal dependency policy; no state-management or UI-kit library for MVP |
-| [0004](DECISIONS/ADR-0004-interim-visual-direction.md) | Interim visual direction and design tokens |
-| [0005](DECISIONS/ADR-0005-git-workflow.md) | Branching and review workflow |
+| ADR                                                                    | Decision                                                                        |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| [0001](DECISIONS/ADR-0001-technology-stack.md)                         | React + TypeScript + Vite SPA; Supabase (Postgres, Auth); Vitest/RTL/Playwright |
+| [0002](DECISIONS/ADR-0002-modular-monolith-database-enforced-rules.md) | Modular monolith; authorisation and integrity enforced in Postgres              |
+| [0003](DECISIONS/ADR-0003-minimal-dependencies.md)                     | Minimal dependency policy; no state-management or UI-kit library for MVP        |
+| [0004](DECISIONS/ADR-0004-interim-visual-direction.md)                 | Interim visual direction and design tokens                                      |
+| [0005](DECISIONS/ADR-0005-git-workflow.md)                             | Branching and review workflow                                                   |
 
 ## 6. External dependencies
 
-| Dependency | Purpose | Status |
-|---|---|---|
-| Supabase (Postgres, Auth, PostgREST) | Data, auth, API | Planned — Phase 2 |
-| SMTP provider (via Supabase Auth) | Confirmation and reset emails | Planned — Phase 2 |
-| Static host (D-07) | Serving SPA, TLS, headers | Planned — Phase 7 |
-| GitHub Actions | CI | Implemented — Phase 1 |
+| Dependency                           | Purpose                       | Status                |
+| ------------------------------------ | ----------------------------- | --------------------- |
+| Supabase (Postgres, Auth, PostgREST) | Data, auth, API               | Planned — Phase 2     |
+| SMTP provider (via Supabase Auth)    | Confirmation and reset emails | Planned — Phase 2     |
+| Static host (D-07)                   | Serving SPA, TLS, headers     | Planned — Phase 7     |
+| GitHub Actions                       | CI                            | Implemented — Phase 1 |
