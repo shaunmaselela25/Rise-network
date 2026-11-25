@@ -1,0 +1,222 @@
+.layout {
+  display: grid;
+  gap: var(--space-6);
+}
+@media (min-width: 60rem) {
+  .layout {
+    grid-template-columns: 18rem 1fr;
+    align-items: start;
+  }
+}
+
+.filters {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  background: var(--color-surface);
+}
+.filters summary {
+  font-weight: 700;
+  cursor: pointer;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.filterFields {
+  display: grid;
+  gap: var(--space-4);
+  margin-top: var(--space-3);
+}
+
+.searchRow {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-5);
+}
+.searchRow > div {
+  flex: 1 1 16rem;
+}
+
+.resultsHeader {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+.resultsCount {
+  margin: 0;
+  font-weight: 600;
+}
+
+.list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--space-4);
+}
+@media (min-width: 48rem) {
+  .list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  border: var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-5);
+  background: var(--color-surface-raised);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.cardMeta {
+  margin: 0 0 var(--space-1);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+.cardTitle {
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--space-1);
+}
+.cardProvider {
+  margin: 0 0 var(--space-3);
+  font-weight: 600;
+}
+.cardSummary {
+  color: var(--color-text-muted);
+  flex: 1;
+}
+.cardFooter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+  align-items: center;
+  font-size: var(--font-size-sm);
+}
+.cardActions {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+}
+.badge_good {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+.badge_warning {
+  border-color: var(--color-notice-border);
+  color: var(--color-accent-text);
+  background: var(--color-notice-bg);
+}
+.badge_neutral {
+  border-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.deadline {
+  font-weight: 600;
+}
+.deadline_soon {
+  color: var(--color-accent-text);
+}
+.deadline_closed {
+  color: var(--color-danger);
+}
+
+.loading {
+  padding-block: var(--space-6);
+  color: var(--color-text-muted);
+}
+
+.empty {
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  padding: var(--space-6);
+  text-align: center;
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+}
+
+/* Detail page */
+.detailHeader {
+  margin-bottom: var(--space-5);
+}
+.facts {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: var(--space-2) var(--space-5);
+  margin: 0 0 var(--space-6);
+}
+.facts dt {
+  font-weight: 700;
+}
+.facts dd {
+  margin: 0;
+}
+@media (max-width: 30rem) {
+  .facts {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .facts dd {
+    margin-bottom: var(--space-3);
+  }
+}
+.prewrap {
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+  margin-block: var(--space-5);
+}
+.section {
+  margin-top: var(--space-6);
+}
+.closedBanner {
+  border: 2px solid var(--color-danger);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  font-weight: 600;
+  margin-bottom: var(--space-5);
+}
+
+/* Tables (moderation, submissions) */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.table th,
+.table td {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: var(--border);
+  vertical-align: top;
+}
+.tableWrap {
+  overflow-x: auto;
+}

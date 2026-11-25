@@ -1,10 +1,18 @@
-import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from 'react';
+import {
+  useId,
+  type InputHTMLAttributes,
+  type ReactNode,
+  type SelectHTMLAttributes,
+  type TextareaHTMLAttributes,
+} from 'react';
 import styles from './Form.module.css';
 
 interface BaseProps {
   label: string;
   error?: string | undefined;
   hint?: ReactNode;
+  /** Show "(optional)" after the label of non-required fields. Default true. */
+  showOptional?: boolean;
 }
 
 function describedBy(...ids: (string | false | undefined)[]): string | undefined {
@@ -14,7 +22,14 @@ function describedBy(...ids: (string | false | undefined)[]): string | undefined
 
 type TextFieldProps = BaseProps & Omit<InputHTMLAttributes<HTMLInputElement>, 'id'>;
 
-export function TextField({ label, error, hint, required, ...inputProps }: TextFieldProps) {
+export function TextField({
+  label,
+  error,
+  hint,
+  required,
+  showOptional = true,
+  ...inputProps
+}: TextFieldProps) {
   const id = useId();
   const hintId = `${id}-hint`;
   const errorId = `${id}-error`;
@@ -22,7 +37,7 @@ export function TextField({ label, error, hint, required, ...inputProps }: TextF
     <div className={styles.field}>
       <label htmlFor={id} className={styles.label}>
         {label}
-        {!required && <span className={styles.optional}> (optional)</span>}
+        {!required && showOptional && <span className={styles.optional}> (optional)</span>}
       </label>
       {hint && (
         <p id={hintId} className={styles.hint}>
@@ -59,6 +74,7 @@ export function SelectField({
   options,
   placeholder,
   required,
+  showOptional = true,
   ...selectProps
 }: SelectFieldProps) {
   const id = useId();
@@ -68,7 +84,7 @@ export function SelectField({
     <div className={styles.field}>
       <label htmlFor={id} className={styles.label}>
         {label}
-        {!required && <span className={styles.optional}> (optional)</span>}
+        {!required && showOptional && <span className={styles.optional}> (optional)</span>}
       </label>
       {hint && (
         <p id={hintId} className={styles.hint}>
@@ -99,7 +115,7 @@ export function SelectField({
   );
 }
 
-type CheckboxFieldProps = Omit<BaseProps, 'label'> &
+type CheckboxFieldProps = Omit<BaseProps, 'label' | 'showOptional'> &
   Omit<InputHTMLAttributes<HTMLInputElement>, 'id' | 'type'> & { label: ReactNode };
 
 export function CheckboxField({ label, error, hint, ...inputProps }: CheckboxFieldProps) {
@@ -129,6 +145,49 @@ export function CheckboxField({ label, error, hint, ...inputProps }: CheckboxFie
           {hint}
         </p>
       )}
+    </div>
+  );
+}
+
+type TextAreaFieldProps = BaseProps & Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'id'>;
+
+export function TextAreaField({
+  label,
+  error,
+  hint,
+  required,
+  showOptional = true,
+  rows = 4,
+  ...textareaProps
+}: TextAreaFieldProps) {
+  const id = useId();
+  const hintId = `${id}-hint`;
+  const errorId = `${id}-error`;
+  return (
+    <div className={styles.field}>
+      <label htmlFor={id} className={styles.label}>
+        {label}
+        {!required && showOptional && <span className={styles.optional}> (optional)</span>}
+      </label>
+      {hint && (
+        <p id={hintId} className={styles.hint}>
+          {hint}
+        </p>
+      )}
+      {error && (
+        <p id={errorId} className={styles.error}>
+          {error}
+        </p>
+      )}
+      <textarea
+        id={id}
+        rows={rows}
+        className={styles.input}
+        required={required}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={describedBy(!!hint && hintId, !!error && errorId)}
+        {...textareaProps}
+      />
     </div>
   );
 }

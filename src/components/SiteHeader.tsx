@@ -1,22 +1,26 @@
 import { useEffect, useId, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router';
 import { primaryNav } from '../app/navigation';
-import { useAuth } from '../features/auth/authContext';
+import { isStaff, useAuth } from '../features/auth/authContext';
 import styles from './SiteHeader.module.css';
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
   const { pathname } = useLocation();
   const menuId = useId();
-  const { status } = useAuth();
-  // Only show an account link when accounts actually exist in this environment.
-  const accountLink =
+  const { status, roles } = useAuth();
+  // Only show account links when accounts actually exist in this environment.
+  const accountLinks =
     status === 'signed_in'
-      ? { to: '/account', label: 'My account' }
+      ? [
+          { to: '/saved', label: 'Saved' },
+          ...(isStaff(roles) ? [{ to: '/moderation', label: 'Moderation' }] : []),
+          { to: '/account', label: 'My account' },
+        ]
       : status === 'signed_out'
-        ? { to: '/sign-in', label: 'Sign in' }
-        : null;
-  const navItems = accountLink ? [...primaryNav, accountLink] : primaryNav;
+        ? [{ to: '/sign-in', label: 'Sign in' }]
+        : [];
+  const navItems = [...primaryNav, ...accountLinks];
 
   // Close the mobile menu whenever the route changes.
   const [lastPath, setLastPath] = useState(pathname);
