@@ -6,23 +6,23 @@ RISE NETWORK is a South African community opportunity platform that helps young 
 discover, understand and act on legitimate opportunities for education, skills development,
 careers, mentorship and community participation.
 
-> **Project status: pre-release, Phase 2 (data and security foundation).** The public site,
-> database schema with Row Level Security, and accounts (register, sign in, password reset,
-> profile, account deletion) are built and tested locally. The opportunity directory UI,
-> moderation screens and admin features are **not yet built**. Nothing is deployed.
+> **Project status: pre-release, Phase 3 (opportunities).** Phases 0–2 are merged and
+> verified in CI. Phase 3 adds the opportunity directory, detail pages, submissions,
+> moderation, saved opportunities and reporting. Learning/career directories and admin
+> screens are **not yet built**. Nothing is deployed.
 > See [docs/PRODUCT_ROADMAP.md](docs/PRODUCT_ROADMAP.md).
 
 ## Features
 
-| Feature                                                                                       | Status                                                          |
-| --------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| Responsive, accessible app shell (navigation, skip link, focus management, 404, error page)   | Implemented, tested                                             |
-| Home, About, Contact, draft Privacy notice and Terms of use                                   | Implemented, tested                                             |
-| Opportunities / Learning / Careers sections                                                   | Placeholder pages that state clearly they are not available yet |
-| Accounts: register (18+), confirm email, sign in/out, password reset, profile, delete account | Implemented, tested (unit, component, integration e2e)          |
-| Database: schema, RLS, roles, audit log, moderation/report/role functions                     | Implemented, tested (70 pgTAP tests)                            |
-| Opportunity directory, submission and moderation screens; saved opportunities UI              | Not started (Phase 3) — database layer exists                   |
-| Admin dashboard, reports and audit screens                                                    | Not started (Phase 5) — database layer exists                   |
+| Feature                                                                                                                                                                        | Status                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| Responsive, accessible app shell (navigation, skip link, focus management, 404, error page)                                                                                    | Implemented, tested                                                       |
+| Home, About, Contact, draft Privacy notice and Terms of use                                                                                                                    | Implemented, tested                                                       |
+| Learning / Careers sections                                                                                                                                                    | Placeholder pages that state clearly they are not available yet (Phase 4) |
+| Accounts: register (18+), confirm email, sign in/out, password reset, profile, delete account                                                                                  | Implemented, tested (unit, component, integration e2e)                    |
+| Database: schema, RLS, roles, audit log, moderation/report/role functions                                                                                                      | Implemented, tested (70 pgTAP tests)                                      |
+| Opportunity directory (search, filters, pagination), detail pages, submission and editing, moderation queue and decisions, saved opportunities with progress tracking, reports | Implemented, tested (unit, component, integration e2e, axe)               |
+| Admin dashboard, reports and audit screens                                                                                                                                     | Not started (Phase 5) — database layer exists                             |
 
 ## Architecture
 
@@ -59,7 +59,7 @@ npm run dev
 
 The local stack uses ports 55320–55329 (Studio: http://127.0.0.1:55323, test inbox
 Mailpit: http://127.0.0.1:55324). Seed data is clearly marked `[SAMPLE]`. To make a local
-user an administrator, see [docs/DATA_MODEL.md §7](docs/DATA_MODEL.md#7-seed-data-strategy).
+user an administrator, see [docs/DATA_MODEL.md §8](docs/DATA_MODEL.md#8-seed-data-strategy).
 
 ## Development commands
 

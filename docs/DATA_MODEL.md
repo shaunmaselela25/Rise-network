@@ -69,7 +69,7 @@ archived), `verification_status` (unverified, source_checked, provider_confirmed
 needs_recheck, disputed), `verification_notes`, `last_checked_at`, `published_at`,
 `submitted_by` (default `auth.uid()`, set null on account deletion).
 
-Derived: `slug` (title + 8 chars of id, trigger), `search_vector` (generated, weighted
+Derived: `slug` (title + 8 chars of id, trigger; column default `''` so clients never supply it — migration 4), `search_vector` (generated, weighted
 title/provider > summary > description).
 
 Database-enforced rules:
@@ -117,12 +117,18 @@ will flag it as a "security definer view"; this is intentional and covered by te
 | `audit_logs`           | –                     | –                                                                                     | –                             | read                     |
 | resources & categories | read published/active | same                                                                                  | full CRUD                     | full CRUD                |
 
-## 6. Rate limits (database)
+## 6. Service role
+
+Migration 5 grants `service_role` (server-side only; bypasses RLS) privileges on public tables,
+sequences and functions, because new tables are not auto-exposed. Used by operators, future
+scheduled jobs and integration-test setup. See SECURITY.md and KNOWN_ISSUES KI-015.
+
+## 7. Rate limits (database)
 
 - Opportunity submissions: 10 per member per 24 h (staff exempt).
 - Reports: 20 per member per 24 h.
 
-## 7. Seed-data strategy
+## 8. Seed-data strategy
 
 - `supabase/seed.sql`: **development fixtures only**, titled `[SAMPLE]`, URLs on
   `example.org`, loaded by `supabase db reset` locally. Never loaded into production.
@@ -132,7 +138,7 @@ will flag it as a "security definer view"; this is intentional and covered by te
   `insert into public.user_roles (user_id, role) values ('<user uuid>', 'admin');`
   Further roles are managed through `set_user_role()`.
 
-## 8. Deferred entities (P1+)
+## 9. Deferred entities (P1+)
 
 `organisations` / partner profiles, `mentors`, `mentorship_requests`, `community_events`,
 `community_submissions`, `notifications`. Not created until requirements and safeguarding

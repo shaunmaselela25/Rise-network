@@ -1,7 +1,9 @@
 # RISE NETWORK — Content Governance
 
-> **Status:** Policy draft (Phase 0). The workflow is not yet implemented in software
-> (Phase 3). Last updated: 2026-11-25.
+> **Status:** Implemented (Phase 3): lifecycle enforced by the database, moderation screens
+> at `/moderation`, review checklist shown to moderators, freshness flag (D-06) on the
+> Published tab. Automatic archiving of closed listings is not yet implemented (KI-016).
+> Last updated: 2026-11-25.
 
 ## 1. Opportunity lifecycle
 
