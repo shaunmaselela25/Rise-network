@@ -9,9 +9,11 @@ import { renderRoute } from '../test/renderRoute';
 describe('content integrity', () => {
   it.each(['/opportunities', '/learning', '/careers'])(
     '%s states clearly that the section is not available yet and shows no controls',
-    (path) => {
+    async (path) => {
       renderRoute(path);
-      expect(screen.getByRole('complementary', { name: /not available yet/i })).toBeInTheDocument();
+      expect(
+        await screen.findByRole('complementary', { name: /not available yet/i }),
+      ).toBeInTheDocument();
       expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
       expect(screen.queryByRole('searchbox')).not.toBeInTheDocument();
       expect(screen.queryByRole('form')).not.toBeInTheDocument();

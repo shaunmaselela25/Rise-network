@@ -1,5 +1,5 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import { CheckboxField, SelectField, TextField } from '../../components/form/Field';
 import { FormStatus } from '../../components/form/FormStatus';
 import formStyles from '../../components/form/Form.module.css';
@@ -104,6 +104,20 @@ export function AccountPage() {
       <p>
         Signed in as <strong>{session?.user.email}</strong>
       </p>
+
+      <nav aria-label="Your activity" style={{ marginBottom: 'var(--space-6)' }}>
+        <ul>
+          <li>
+            <Link to="/saved">Saved opportunities</Link>
+          </li>
+          <li>
+            <Link to="/my-submissions">My submissions</Link>
+          </li>
+          <li>
+            <Link to="/submit">Submit an opportunity</Link>
+          </li>
+        </ul>
+      </nav>
 
       <section aria-labelledby="profile-heading">
         <h2 id="profile-heading">Profile</h2>

@@ -18,10 +18,13 @@ const expectedHeadings: Record<string, RegExp> = {
 };
 
 describe('routing', () => {
-  it.each(Object.entries(expectedHeadings))('renders %s with its page heading', (path, heading) => {
-    renderRoute(path);
-    expect(screen.getByRole('heading', { level: 1, name: heading })).toBeInTheDocument();
-  });
+  it.each(Object.entries(expectedHeadings))(
+    'renders %s with its page heading',
+    async (path, heading) => {
+      renderRoute(path);
+      expect(await screen.findByRole('heading', { level: 1, name: heading })).toBeInTheDocument();
+    },
+  );
 
   it('has no dead navigation links: every nav target has its own page', () => {
     const targets = new Set([...primaryNav, ...footerNav].map((item) => item.to));

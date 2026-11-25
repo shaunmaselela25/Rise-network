@@ -1,6 +1,6 @@
 # RISE NETWORK — Architecture
 
-> **Status:** Phases 1–2 implemented and verified locally: frontend shell, Supabase schema
+> **Status:** Phases 1–2 verified in CI; Phase 3 implemented: frontend shell, Supabase schema
 > with RLS, authentication and account management. Not deployed. Last updated: 2026-11-25.
 
 ## 1. Overview
@@ -64,7 +64,10 @@ src/
 
 Rules:
 
-- `features/auth` exposes `useAuth()` / `RequireAuth` as its public API for other features.
+- `features/auth` exposes `useAuth()` / `RequireAuth` / `RequireStaff` as its public API.
+- `features/opportunities` exposes `api.ts`, `components.tsx` and `labels.ts`; `features/moderation`
+  builds on them (moderation is a workflow over the opportunity domain).
+- All Supabase queries for a feature live in its `api.ts`; pages never build queries.
 - Pages that need the Supabase client are lazy-loaded routes; the client itself is loaded
   after first render so public pages do not download it (NFR-001).
 

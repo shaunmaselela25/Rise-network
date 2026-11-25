@@ -1,12 +1,26 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { isBackendConfigured } from '../../lib/backendFlag';
-import { AuthContext, type AuthState } from './authContext';
+import type { Session } from '@supabase/supabase-js';
+import type { RiseSupabaseClient } from '../../lib/supabase';
+import { AuthContext, type AppRole, type AuthState } from './authContext';
+
+async function loadRoles(
+  supabase: RiseSupabaseClient,
+  session: Session | null,
+): Promise<AppRole[]> {
+  if (!session) return [];
+  const { data, error } = await supabase
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', session.user.id);
+  return error || !data ? [] : data.map((row) => row.role);
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>(() =>
     isBackendConfigured()
-      ? { status: 'loading', session: null }
-      : { status: 'unavailable', session: null },
+      ? { status: 'loading', session: null, roles: [] }
+      : { status: 'unavailable', session: null, roles: [] },
   );
 
   useEffect(() => {
@@ -20,20 +34,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const supabase = getSupabase();
         if (!active) return;
         if (!supabase) {
-          setState({ status: 'unavailable', session: null });
+          setState({ status: 'unavailable', session: null, roles: [] });
           return;
         }
+        const apply = async (session: Session | null) => {
+          const roles = await loadRoles(supabase, session);
+          if (active) setState({ status: session ? 'signed_in' : 'signed_out', session, roles });
+        };
         const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-          if (active) setState({ status: session ? 'signed_in' : 'signed_out', session });
+          // Defer: calling Supabase inside this callback can deadlock the auth client.
+          setTimeout(() => void apply(session), 0);
         });
         unsubscribe = () => listener.subscription.unsubscribe();
         const { data } = await supabase.auth.getSession();
-        if (active) {
-          setState({ status: data.session ? 'signed_in' : 'signed_out', session: data.session });
-        }
+        await apply(data.session);
       })
       .catch(() => {
-        if (active) setState({ status: 'signed_out', session: null });
+        if (active) setState({ status: 'signed_out', session: null, roles: [] });
       });
 
     return () => {

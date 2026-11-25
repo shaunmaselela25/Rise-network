@@ -6,6 +6,19 @@ All notable changes are recorded here. Format based on
 
 ## [Unreleased]
 
+### Added — Phase 3 (opportunities)
+
+- Opportunity directory: full-text search, filters (type, field, province, qualification,
+  closing window, include closed), sorting, pagination, shareable URLs.
+- Opportunity detail: verification explanation, source and last-checked date, closed banner,
+  https-only apply link, save and report.
+- Submissions: submit, save draft, edit, resubmit, delete draft, review history and notes.
+- Moderation: review queue, publish/request changes/reject/unpublish/archive, verification
+  updates, freshness flag (D-06), reports queue.
+- Saved opportunities with progress tracking.
+- Migrations 4 (slug default) and 5 (service_role privileges).
+- axe-core accessibility scans; lifecycle integration e2e; bundle secret check.
+
 ### Added
 
 - Phase 2: Supabase local stack configuration (hardened auth settings, explicit API grants,
