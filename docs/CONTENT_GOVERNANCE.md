@@ -62,3 +62,14 @@ actioned within one working day (target, not a guarantee).
 
 No scraping of third-party sites without permission and a terms review. Preferred sources:
 provider submissions, official provider websites checked manually, authorised feeds.
+
+## 7. Learning resources and career guides (Phase 4)
+
+- Created and maintained by staff only (moderators and admins); every change is audited.
+- States: draft (private), published (public), archived (private).
+- Publishing (or saving while published) records the review date shown to the public.
+- Cost must be factual: free, paid, funding available, or "cost not confirmed" when the
+  provider does not state it.
+- RISE NETWORK does not accredit courses; descriptions must not claim accreditation unless
+  the provider states it, and the directory says so to users.
+- Career guide text is plain text and never rendered as HTML.

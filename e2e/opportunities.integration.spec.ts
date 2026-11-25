@@ -1,5 +1,6 @@
-import { expect, test, type Browser, type Page } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { expectNoA11yViolations } from './a11y';
+import { createConfirmedUser, deleteUser, grantRole, serviceKey, signedInPage } from './helpers';
 
 /**
  * Critical journeys 1–3 and 6–11 (docs/PRODUCT_REQUIREMENTS.md) against the real local stack:
@@ -8,62 +9,7 @@ import { expectNoA11yViolations } from './a11y';
  * by the test process only and is not a VITE_ variable, so it never reaches the bundle).
  */
 
-const apiUrl = process.env.VITE_SUPABASE_URL ?? '';
-const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY ?? '';
-const password = 'IntegrationTest123';
 const runId = Date.now();
-
-const adminHeaders = {
-  apikey: serviceKey,
-  Authorization: `Bearer ${serviceKey}`,
-  'Content-Type': 'application/json',
-};
-
-async function createConfirmedUser(email: string, displayName: string): Promise<string> {
-  const response = await fetch(`${apiUrl}/auth/v1/admin/users`, {
-    method: 'POST',
-    headers: adminHeaders,
-    body: JSON.stringify({
-      email,
-      password,
-      email_confirm: true,
-      user_metadata: {
-        display_name: displayName,
-        age_confirmed: true,
-        terms_version: '0.1-draft',
-        privacy_version: '0.1-draft',
-      },
-    }),
-  });
-  expect(response.ok, await response.clone().text()).toBe(true);
-  return ((await response.json()) as { id: string }).id;
-}
-
-async function grantModerator(userId: string) {
-  const response = await fetch(`${apiUrl}/rest/v1/user_roles`, {
-    method: 'POST',
-    headers: { ...adminHeaders, Prefer: 'return=minimal' },
-    body: JSON.stringify({ user_id: userId, role: 'moderator' }),
-  });
-  expect(response.ok, await response.clone().text()).toBe(true);
-}
-
-async function deleteUser(userId: string) {
-  await fetch(`${apiUrl}/auth/v1/admin/users/${userId}`, {
-    method: 'DELETE',
-    headers: adminHeaders,
-  });
-}
-
-async function signedInPage(browser: Browser, email: string): Promise<Page> {
-  const page = await (await browser.newContext()).newPage();
-  await page.goto('/sign-in');
-  await page.getByRole('textbox', { name: 'Email address' }).fill(email);
-  await page.getByLabel('Password').fill(password);
-  await page.getByRole('button', { name: 'Sign in' }).click();
-  await expect(page).toHaveURL(/\/account$/);
-  return page;
-}
 
 async function search(page: Page, text: string) {
   await page.goto('/opportunities');
@@ -87,7 +33,7 @@ test('opportunity lifecycle: submit, moderate, discover, save, report, resolve',
   userIds.push(await createConfirmedUser(memberEmail, 'Integration Member'));
   const moderatorId = await createConfirmedUser(moderatorEmail, 'Integration Moderator');
   userIds.push(moderatorId);
-  await grantModerator(moderatorId);
+  await grantRole(moderatorId, 'moderator');
 
   // 1. Member submits an opportunity (FR-008).
   const member = await signedInPage(browser, memberEmail);

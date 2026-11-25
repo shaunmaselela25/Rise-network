@@ -1,6 +1,6 @@
 # RISE NETWORK — Architecture
 
-> **Status:** Phases 1–2 verified in CI; Phase 3 implemented: frontend shell, Supabase schema
+> **Status:** Phases 1–3 verified in CI; Phase 4 implemented: frontend shell, Supabase schema
 > with RLS, authentication and account management. Not deployed. Last updated: 2026-11-25.
 
 ## 1. Overview
@@ -57,7 +57,8 @@ src/
   app/          App shell: router, layout, providers, error boundary
   components/   Shared, presentational UI (design system)
   features/     Business capabilities — each owns its pages, components, data access, rules
-    home/  info/  opportunities/  learning/  careers/  auth/  profile/  (admin/ — Phase 5)
+    home/  info/  opportunities/  moderation/  learning/  careers/  manage/  auth/  profile/
+    (admin/ — Phase 5)
   lib/          Cross-cutting utilities (env, formatting)
   styles/       Design tokens and global styles
 ```
@@ -68,6 +69,9 @@ Rules:
 - `features/opportunities` exposes `api.ts`, `components.tsx` and `labels.ts`; `features/moderation`
   builds on them (moderation is a workflow over the opportunity domain).
 - All Supabase queries for a feature live in its `api.ts`; pages never build queries.
+- `features/manage` (staff content management) builds on the `learning` and `careers` APIs.
+- Shared building blocks: `lib/errors.ts` (safe user-facing errors, `useData`),
+  `components/AsyncStates.tsx` (loading/error), `components/Listing.module.css`.
 - Pages that need the Supabase client are lazy-loaded routes; the client itself is loaded
   after first render so public pages do not download it (NFR-001).
 
